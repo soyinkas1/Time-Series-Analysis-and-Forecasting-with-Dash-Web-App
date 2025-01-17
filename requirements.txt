@@ -1,0 +1,13 @@
+dash
+plotly
+pandas 
+alpha_vantage
+dash_bootstrap_components
+jupyter
+python-dotenv
+seaborn
+matplotlib
+statsmodel
+auto-arima
+scikit-learn
+arch
