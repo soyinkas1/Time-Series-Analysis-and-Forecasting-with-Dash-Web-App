@@ -1,13 +1,14 @@
 dash
 plotly
 pandas 
+numpy
 alpha_vantage
 dash_bootstrap_components
 jupyter
 python-dotenv
 seaborn
 matplotlib
-statsmodel
-auto-arima
+statsmodels
 scikit-learn
 arch
+prophet
