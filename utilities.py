@@ -17,8 +17,10 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV, cross_
 from exception import CustomException
 import sys
 import dill
+from prophet import Prophet
 from prophet.diagnostics import cross_validation
 from prophet.plot import plot_cross_validation_metric
+from prophet.diagnostics import performance_metrics
 
 def read_yaml(path_to_yaml: Path) -> ConfigBox:
     try:
@@ -109,7 +111,7 @@ def load_object(file_path: str | os.PathLike):
         raise CustomException(e, sys)
         
    
-def evaluate_fbp_models(train, test, horizon, param):
+def evaluate_fbp_model(train, test, cutoff, horizon, param):
     try:
         """
         This method fits and score the time series models provided while doing a gridsearch cross
@@ -122,35 +124,24 @@ def evaluate_fbp_models(train, test, horizon, param):
              
         Returns: a dictionary of the a key values pair of model and score
         """ 
-        def get_object(class_path):
-            """
-            get the class object from the string returned from YAML 
-            """
-            module_name, class_name = class_path.rsplit('.', 1)
-            module = __import__(module_name, fromlist=[class_name])
-            
-            return getattr(module, class_name)()
-        
-        for model_name, class_path in models.items():
-             models[model_name] = get_object(class_path)
-                
-        report = {}
-     
-        for i in range(len(list(models))):
-            model = list(models.values())[i]
-            para=param[list(models.keys())[i]]
-                     
-            gs = GridSearchCV(model, para, cv=3, verbose=3)
-            gs.fit(train)
+        param_box = read_yaml(param)
+        param_grid = param_box.param_grid
 
-            model.set_params(**gs.best_params_)
-            model.fit(train)
+        # Generate all combinations of parameters
+        all_params = [dict(zip(param_grid.keys(), v)) for v in itertools.product(*param_grid.values())]
+        rmses = []  # Store the RMSEs for each params here
 
-            forecast = 
-            test_model_score = mean_squared_error(test, forecast)
+        # Use cross validation to evaluate all parameters
+        for params in all_params:
+            m = Prophet(**params).fit(train)  # Fit model with given params
+            df_cv = cross_validation(m, period=cutoff, horizon='30 days', parallel="processes")
+            df_p = performance_metrics(df_cv, rolling_window=1)
+            rmses.append(df_p['rmse'].values[0])
 
-            report[list(models.keys())[i]] = test_model_score
-        return report
+        # Find the best parameters
+        tuning_results = pd.DataFrame(all_params)
+        tuning_results['rmse'] = rmses
+        return tuning_results
     except Exception as e:
         raise e
     
