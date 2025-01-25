@@ -2,6 +2,7 @@ from dash import Dash, dcc, html, Output, Input
 
 from dash.html import Center
 import plotly.express as px
+import plotly.graph_objects as go
 from alpha_vantage.timeseries import TimeSeries
 from dash import dcc, html, Output, Input, dash_table
 import plotly.express as px
@@ -67,7 +68,7 @@ def draw_trend_graph(commodity, interval, start_date, end_date):
     cd = CommodityData()
     # Upload data from storage
     df = cd.etl_commodity_data(commodity, interval, start_date, end_date)
-
+    
     # Create the trend chart 
     fig = px.line(df,y='value', title=f'Commodity - {commodity} Price Trend Over Time ({interval})',
                   labels={'value': 'Price', 'date': 'Date'})
@@ -77,7 +78,12 @@ def draw_trend_graph(commodity, interval, start_date, end_date):
                        legend_title_text='Legend', 
                        xaxis_title='Date', 
                        yaxis_title='Price', 
-                       showlegend=True)
+                       showlegend=True,
+                       xaxis=dict(
+        rangeslider=dict(
+            visible=True
+        )
+    ))
     return fig
 
 

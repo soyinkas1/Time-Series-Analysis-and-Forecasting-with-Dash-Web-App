@@ -54,7 +54,7 @@ class CommodityData:
             file = os.listdir(wti_dir)
             
             # Check if there is no existing download
-            if str(end_date.strftime('%Y-%m-%d') +'.csv') not in file:
+            if str(end_date.strftime('%Y-%m-%d') + f'{interval}_.csv') not in file:
                 # Download from API for commodity requested
                 wti_data = self.cd.get_wti(interval)
                 
@@ -73,11 +73,14 @@ class CommodityData:
                     # Fill missing data using backfill
                     wti_df = wti_df.bfill()
 
+                    # Convert value column to float
+                    wti_df['value'] = wti_df['value'].astype('float')
+
                     # Remove negative and zero values
                     wti_df = wti_df[wti_df['value'] >= 0]
 
                     # Load the full file to csv 
-                    wti_df.to_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') +'.csv')}')
+                    wti_df.to_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') + f'{interval}_.csv')}')
 
                     # Filter for the start date and end date
                     wti_df = wti_df[(wti_df.index >= start_date) & (wti_df.index <= end_date)]
@@ -89,7 +92,7 @@ class CommodityData:
                 return wti_df    
                     
             else:
-                wti_df = pd.read_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') +'.csv')}')
+                wti_df = pd.read_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') + f'{interval}_.csv')}')
                 
                 # Transform to time-series df
                 wti_df.set_index('date', drop=True, inplace=True)
@@ -101,6 +104,9 @@ class CommodityData:
                 wti_df['value'] = wti_df['value'].replace('.', np.nan)        
                 # Fill missing data using backfill
                 wti_df = wti_df.bfill()
+
+                # Convert value column to float
+                wti_df['value'] = wti_df['value'].astype('float')
 
                 # Remove negative and zero values
                 wti_df = wti_df[wti_df['value'] >= 0]
@@ -117,7 +123,7 @@ class CommodityData:
             file = os.listdir(brent_dir)
             
             # Check if there is no existing download
-            if str(end_date.strftime('%Y-%m-%d') +'.csv') not in file:
+            if str(end_date.strftime('%Y-%m-%d') + f'{interval}_.csv') not in file:
                 # Download from API for commodity requested
                 brent_data = self.cd.get_brent(interval)
                 
@@ -136,6 +142,9 @@ class CommodityData:
                     # Fill missing data using backfill
                     brent_df = brent_df.bfill()
 
+                    # Convert value column to float
+                    brent_df['value'] = brent_df['value'].astype('float')
+
                     # Remove negative and zero values
                     brent_df = brent_df[brent_df['value'] >= 0]
 
@@ -152,7 +161,7 @@ class CommodityData:
                 return brent_df    
                     
             else:
-                brent_df = pd.read_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') +'.csv')}')
+                brent_df = pd.read_csv(f'data/{commodity}/{str(end_date.strftime('%Y-%m-%d') + f'{interval}_.csv')}')
                 
                 # Transform to time-series df
                 brent_df.set_index('date', drop=True, inplace=True)
@@ -164,6 +173,9 @@ class CommodityData:
                 brent_df['value'] = brent_df['value'].replace('.', np.nan)        
                 # Fill missing data using backfill
                 brent_df = brent_df.bfill()
+
+                # Convert value column to float
+                brent_df['value'] = brent_df['value'].astype('float')
                 # Filter for the start date and end date
                 brent_df = brent_df[(brent_df.index >= start_date) & (brent_df.index <= end_date)]
             return brent_df
