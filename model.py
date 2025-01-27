@@ -1,4 +1,4 @@
-from utilities import evaluate_fbp_model
+from utils import evaluate_fbp_model
 from commodity_etl import CommodityData
 from logger import logging
 from exception import CustomException
