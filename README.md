@@ -40,80 +40,61 @@ The following are objectives of the project:
   
 ## Project Structure
 ```
-├── app
-│   ├── data
-│   │   ├── heart-diesease.csv
-│   ├── main
-│   │   ├── components
-│   │   │   ├── __initi__.py
-│   │   │   ├── data_cleaning.py
-│   │   │   ├── data_ingestion.py
-│   │   │   ├── data_transformation.py
-│   │   │   ├── model_training.py
-│   │   ├── config
-│   │   │   ├── __init__.py
-│   │   │   ├── config_entity.py
-│   │   │   ├── config.yaml
-│   │   │   ├── configuration.py
-│   │   │   ├── params.yaml
-│   │   ├── constants
-│   │   │   ├── __init__.py
-│   │   ├── pipeline
-│   │   │   ├── __init__.py
-│   │   │   ├── stage_01_data_ingestion.py
-│   │   │   ├── stage_02_data_cleaning.py
-│   │   │   ├── stage_03_data_transformation.py
-│   │   │   ├── stage_04_model_training.py
-│   │   │   ├── stage_05_prediction_pipeline.py
+
+├── assets
+├── artifacts
+|   ├── data_ingestion
+|   |   ├──WTI
+│   |   ├──Brent
+│   ├── data_transformation
+│   │   ├──WTI 
+│   │   ├──Brent 
+│   ├── best_model.pkl
+├── logs
+├── notebooks
+|   ├──ETL_EDA_Modelling_Experiment.ipynb
+├── src
+|   ├── __init__.py
+│   ├── components
 │   │   ├── __init__.py
-│   │   ├── errors.py
+│   │   ├── data_ETL.py
+│   │   ├── data_transformation.py
+│   │   ├── model_training.py
+│   ├── config
+│   │   ├── __init__.py
+│   │   ├── config_entity.py
+│   │   ├── config.yaml
+│   │   ├── configuration.py
+│   │   ├── params.yaml
+│   ├── constants
+│   │   ├── __init__.py
+│   ├── pipeline
+│   │   ├── __init__.py
+│   │   ├── stage_01_data_ETL.py
+│   │   ├── stage_02_data_transformation.py
+│   │   ├── stage_03_model_training.py
+│   │   ├── stage_04_prediction_pipeline.py
 │   │   ├── exception.py
 │   │   ├── forms.py
-│   │   ├── logging.py
-│   │   ├── views.py
+│   │   ├── logger.py
 │   ├── notebooks
-│   │   ├── Heart Disease Classification Project_Latest Research.ipynb
-│   │   ├── Heart Disease Classification Project_ZTM Walkalong 08_22.ipynb
 │   ├── static
-│   │   ├──bootstrap.min.css
-│   │   ├──style.css    
-│   ├── templates
-│   │   ├──mail
-│   │   │   ├──results.html
-│   │   ├──404.html
-│   │   ├──500.html
-│   │   ├──base.html
-│   │   ├──index.html
-│   │   ├──prediction.html
-│   │   ├──results.html
-│   ├──utils
+│   │   ├──vendor
+│   │   |   ├──bootstrap
+│   │   |   ├──aos
+│   │   |   ├──glightbox
+│   │   ├──main.css    
+├──utils
 │   │   ├── __init__.py
 │   │   ├── common.py
-│   ├── __init__.py
-│   ├── db_models.py 
-│   ├── email.py 
-├── artifacts
-│   ├── data_cleaning 
-│   │   ├── clean_heart-disease.csv    
-│   ├── data_ingestion
-│   │   ├── loaded_heart-disease.csv  
-│   ├── data_transformation
-│   │   ├── X_test.csv
-│   │   ├── X_train.csv
-│   │   ├── y_test.csv
-│   │   ├── y_train.csv
-│   ├── best_model.pkl
-│   ├── preprocessor.pkl
-├── logs
-├── migrations
 ├── tests
+│   ├── function_class_test.py
 ├── venv
 ├── __init__.py
 ├── .env
 ├── .gitignore
-├── application.py
-├── config.py
-├── Dockerfile
+├── app.py
+├── main.py
 ├──  README.md
 ├── requirements.txt
 
@@ -122,36 +103,23 @@ The following are objectives of the project:
 ## Tech Stack
 ### Dependencies
 ```
-- python 3.12
-- pandas
-- numpy
-- scikit-learn
+- dash
 - plotly
-- matplotlib
-- seaborn
-- lightgbm
-- xgboost
-- dill
-- flask
-- flask-wtf
-- flask-bootstrap
-- flask-mail
-- flask-moment
-- flask_sqlalchemy
-- psycopg2
-- flask_fontawesome
-- Flask-Migrate
-- ensure
-- python-box
-- pyYAML
-- python-dotenv
+- pandas 
+- numpy
+- alpha_vantage
+- dash_bootstrap_components
 - jupyter
-- gunicorn
-- email_validator
+- python-dotenv
+- seaborn
+- matplotlib
+- statsmodels
+- scikit-learn
+- arch
+- prophet
+- python-box
+- dill
 - Github (action)
-- Azure Web App
-- Azure MySQL Flexible Server
-- HTML & CSS
 
 ```
 ### Step-by-Step Implementation
@@ -172,105 +140,9 @@ The following steps were carried out of this dataset to clean and transform it f
     * There is no missing values in the dataset
 - There was no requirement for transformation as well as there dataset were already encoded for its categorical features
         
-## Final Data Dictionary 
+### Time Series Exploration Data Analysis 
 
-<table border="1">
-        <thead>
-            <tr>
-                <th>S/N</th>
-                <th>Feature</th>
-                <th>Description</th>
-                <th>Data Class</th>
-                <th>Data Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Age</td>
-                <td>The Age of patient in years</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>          
-                <td>2</td>
-                <td>Sex</td>
-                <td>1-Male or 2-Female.</td>
-                <td>categorical</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>cp</td>
-                <td>Chest Pain Type</td>
-                <td>categorical</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>tresbps</td>
-                <td>Resting Blood Pressure (in mm Hg on admissions to the hospital).</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>chol</td>
-                <td>Serum Cholestoral in mg/dl.</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>fbs</td>
-                <td>Fasting Blood Sugar > 120mg (1-True, 0-False).</td>
-                <td>categorical</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>restecg</td>
-                <td>Resting electocadiographic (ECG)  results</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>oldpeak</td>
-                <td>ST depression induced by exercise relative to rest</td>
-                <td>numeric</td>
-                <td>float</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>slope</td>
-                <td>The slope of the peak exercise ST segment.</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>ca</td>
-                <td>Number of major vessels (0-3) coloured by flourosopy</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-            <tr>
-                <td>11</td>
-                <td>thal</td>
-                <td>1-Normal, 2-Fixed defect, 3-Reversible defect</td>
-                <td>numeric</td>
-                <td>int</td>
-            </tr>
-             <tr>
-                <td>12</td>
-                <td>Target</td>
-                <td>(1) for has heart disease and (0) for do not have heart disease</td>
-                <<td>label</td>
-                <td>int</td>
-            </tr>           
-        </tbody>
-    </table>
+
 				
 
 ## Model Training
@@ -308,12 +180,10 @@ Once the best model is identified, it is saved to a file to be used later to mak
 This process will be updated in the next version to incorporate a complete MLOps pipeline with automated model training and model Registry 
 
 ## Deployment
-### Flask Web App
+### Dash App in Flask Web App
 - The Flask web framework was used to share the web application for use. A simple web app with a form to collect data points and return the prediction was developed. CSS was used to perform minimal customasation of the Bootstrap template used for the web page. This web app has the capability to email the prediction results to the email address provided and also store the prediction data and result in a database.
-### Azure Deployment
-Deployment to `Azure Web App Service` was done using Github action with `Docker` for CI/CD of the application. The `Azure MySQL Flexible Server` was used to store the prediction results and data. The database was connect to MySQL Workbench for easy analysis of the prediction data in the database.
 
-Use the link below to access the web app deployed to `Azure Cloud`:
+Use the link below to access the web app deployed to custom domain- `www.soyinkasowoolu.com`:
 
 https://hdpredictor.azurewebsites.net/
 
