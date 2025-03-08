@@ -145,8 +145,11 @@ The following steps were carried out of this dataset to clean and transform it f
 
 - Extraction:
     * The dataset served by the API was in the form of a Tuple of DataFrame contained the timestamped values. Thus the first step was to extract the DataFrame from the Tuple (see figure 1).
+      
     ![tuple of df](image.png)
-    Fugure 1. Tuple with DataFrame of time series data
+  
+    Figure 1. Tuple with DataFrame of time series data
+  
 - Transform Index to DateTime:
     * The index of Dataframe was an `object` data type which required transformation to `DateTime`.
 - Remove wrong / bad data:
@@ -177,20 +180,22 @@ Together with smoothing (rolling average) for mean and standard deviation we cou
 * Needed to go granular or statistical to identify seasonality.
 * There was visible periods of price fluactuations which collides with global economic shocks of 2008 (financial meltdown), 2016 (shale oil boom), 2020 (Covid) and 2023 (Russia-Ukraine war)
 
-These was all further confirmed programtically  with:
+These was all further confirmed programmatically  with:
 * `seasonal_decompose()` (Seasonal Decomposition)
 * `month_plot()`, `quarter_plot()` (Seasonal Decomposition)
 * Dickey-Fuller test -`adfuller()` (stationality)
+  
 ![seasonal_decompose](image-1.png)
+
 * ACF and PACF -`plot_acf()`, `plot_pacf()` (autoregression and errors of lags- stationality & seasonality)
 
 ![acf_pacf](image-2.png)
 
 The final EDA position was that from the observed trends in the original data and the rolling mean, we can conclude that the time series is non-stationary in line with visual EDA. 
  
- A stationary time series should have a constant mean and variance over time, which is not the case here. We had a non-constant mean showing a upward trend .
+ A stationary time series should have a constant mean and variance over time, which is not the case here. We had a non-constant mean showing an upward trend .
  
- There was a mild seasonal fluactuation in the price of crude oil (WTI). The price spikes seen in 2008 and 2020 are easily explained from the global financial crisis of 2008, shale oil discovery in 2015/2016 and Covid-19 in 2020. The initial rise in 2022 can be ascribed to the Russia-Ukraine conflict with prices subsequently falling.
+ There was a mild seasonal fluctuation in the price of crude oil (WTI). The price spikes seen in 2008 and 2020 are easily explained by the global financial crisis of 2008, the discovery of shale oil in 2015/2016, and Covid-19 in 2020. The initial rise in 2022 can be ascribed to the Russia-Ukraine conflict with prices subsequently falling.
 
 
 ## Model Training
@@ -210,7 +215,8 @@ Firstly, we load the dataset using the ETL pipeline created:
     * Test Data: Used to evaluate the final model's performance.
 - Splitting the Data
 Split of the dataset for each model experimented with is based on the DateTime Index. Majorly, we created a training and test set. The target was to have a model that would forecast crude oil prices for the next quarter (90 days). However, this was a dynamic option as we ticked as I worked I on:
- Example split: 
+ Example split:
+
  ![train_test_split](image-3.png)
 
 * Exponential Smoothing (Holt Winters):
@@ -225,19 +231,19 @@ The method uses three smoothing equations:
 - **Double** - ***Trend***: Captures the trend (increasing or decreasing pattern) of the series.
 - **Triple** - ***Seasonality***: Captures the repeating seasonal pattern.
 
-The Simple exponental smoothing (SES) model returned the same value for the forecast as expected. SES does not model trends or seasonality.
+The Simple exponential smoothing (SES) model returned the same value for the forecast as expected. SES does not model trends or seasonality.
 It assumes the best guess for the next value is the current smoothed level, which remains constant unless new observations significantly change it.
 
 Double Exponential Smoothing adds another layer that handles trends in data - There was a slow upward trend predicted which is line with the test set trend even though the volatility is not captured by the forecast. The multiplcative trend is has a negative gradient while the additive trend is growing.
 
-Triple Exponential Smoothing- The EDA showed a small  amount of seasonality in the data and this was amplified by the TES which tried to model the seasonality and trend but not able to model this adequately.
+Triple Exponential Smoothing- The EDA showed a small  amount of seasonality in the data and this was amplified by the TES which tried to model the seasonality and trend, but not able to model this adequately.
 
 It became apparent that the Holt-Winters is not able to model the complexity of the crude oil price data. 
  
  One of the limitation of Holt-Winters is that it does not have room for regressors so external factors cannot be considered. Crude oil prediction is complex as it is affected by myriad of external factors such
 
  * Supply and Demand
- * Geopolitical Events e.g. Russia Ukraine conflict
+ * Geopolitical Events e.g. Russia-Ukraine conflict
  * Economic Indicators
  * Exchange Rates
  * Inventory Levels
@@ -247,7 +253,7 @@ It became apparent that the Holt-Winters is not able to model the complexity of 
  While we expected ARIMA, SARIMA to also struggle with this data set having non-seasonal variability (peaks and dips) from external events, we explored further with them.
 
 * ARIMA, SARIMA 
-- Hyperparameter selection: Based on the ACF and PACF plots done during EDA, ARIMA(1, 1, 0) was first experimented with to have a base model for comparison. This model fitted well but there was apparent concerns with the residuals normality and heretoskedasticity. 
+- Hyperparameter selection: Based on the ACF and PACF plots done during EDA, ARIMA(1, 1, 0) was first experimented with to have a base model for comparison. This model fitted well but there was apparent concerns with the residuals normality and heteroskedasticity. 
 
 `Residuals Normality:` This refers to whether the residuals (errors) from the model follow a normal (bell-shaped) distribution. Non-normal residuals may indicate that the model is missing something or that the assumptions of the analysis are not fully satisfied.
 
@@ -270,7 +276,7 @@ Hyperparameter tuning was implemented for different values of p, d, q , P, D, Q,
 
 `s:` The periodicity or length of the seasonal cycle (e.g., 12 for monthly data with yearly seasonality)
 
-The `SARIMA`results models the volatility in the data better than `ARIMA` which were almost straight lines for the mild seasonality effects. Thus, justifying the need to use more complex models that accounts for external or exogenous factors like `SARIMAX` or `PROPHET`. But before this we modelled  for the volatility using `GARCH` and then combine with the `SARIMA` model for forecasting.
+The `SARIMA`results models the volatility in the data better than `ARIMA` which were almost straight lines for the mild seasonality effects. Thus, justifying the need to use more complex models that account for external or exogenous factors like `SARIMAX` or `PROPHET`. But before this we modelled  for the volatility using `GARCH` and then combine with the `SARIMA` model for forecasting.
 
 * GARCH, GARCH+SARIMA
 The `GARCH` model was built using both the differenced value and the residuals from an ARIMA model. After experimenting with these and `GARCH(3,2)` and `GARCH(1,1)`, the results favoured using `GARCH(1,1)` as it is simpler, had better AIC/BIC and all the parameters were statistically significant (p-value <0.05).
