@@ -19,3 +19,5 @@ logging.basicConfig(
     ]
 
 )
+
+logging = logging.getLogger('Logger')

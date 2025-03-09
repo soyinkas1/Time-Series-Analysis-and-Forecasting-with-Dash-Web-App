@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import itertools
 import numpy as np
-from logger import logging
+from src.logger import logging
 # from box.exceptions import BoxValueError
 from box import ConfigBox
 import yaml
@@ -14,7 +14,7 @@ from pathlib import Path
 # from typing import Any
 # from ensure import ensure_annotations
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, cross_val_score, GridSearchCV
-from exception import CustomException
+from src.exception import CustomException
 import sys
 import dill
 from prophet import Prophet
@@ -91,7 +91,7 @@ def load_bin(path: Path):
     logging.info(f'binary file loaded from: {path}')
     return  data
 
-def save_object(file_path: str | os.PathLike, obj):
+def save_object(file_path: str , obj):
     """
     Saves the object as a pickle file on the file_path provided
     
@@ -102,7 +102,7 @@ def save_object(file_path: str | os.PathLike, obj):
         dill.dump(obj, file_obj)
 
 
-def load_object(file_path: str | os.PathLike):
+def load_object(file_path: str ):
     try:
         with open(file_path, "rb") as file_obj:
             return dill.load(file_obj)
@@ -146,5 +146,18 @@ def evaluate_fbp_model(train, test, cutoff, horizon, param):
         raise e
     
 
+def prep_train_data_prophet(df, train_size=1):
+    # lets rename the DF as required in `fbprophet`
+    df_fbp = df.copy()
+    df_fbp.reset_index(inplace=True)
+    df_fbp.rename(columns={'value':'y', 'date': 'ds'}, inplace=True)
+    df_fbp = df_fbp[['ds', 'y']]
+    df_fbp.sort_values('ds',inplace=True)
+    train_size = int(len(df_fbp) * train_size)
 
+    train_df = df_fbp.iloc[:train_size]
+    test_df = df_fbp.iloc[train_size:]
+
+    
+    return train_df , test_df
 
