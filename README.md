@@ -146,7 +146,7 @@ The following steps were carried out of this dataset to clean and transform it f
 - Extraction:
     * The dataset served by the API was in the form of a Tuple of DataFrame contained the timestamped values. Thus the first step was to extract the DataFrame from the Tuple (see figure 1).
       
-    ![tuple of df](image.png)
+    ![tuple of df](assets/image.png)
   
     Figure 1. Tuple with DataFrame of time series data
   
@@ -185,11 +185,11 @@ These was all further confirmed programmatically  with:
 * `month_plot()`, `quarter_plot()` (Seasonal Decomposition)
 * Dickey-Fuller test -`adfuller()` (stationality)
   
-![seasonal_decompose](image-1.png)
+![seasonal_decompose](assets/image-1.png)
 
 * ACF and PACF -`plot_acf()`, `plot_pacf()` (autoregression and errors of lags- stationality & seasonality)
 
-![acf_pacf](image-2.png)
+![acf_pacf](assets/image-2.png)
 
 The final EDA position was that from the observed trends in the original data and the rolling mean, we can conclude that the time series is non-stationary in line with visual EDA. 
  
@@ -217,7 +217,7 @@ Firstly, we load the dataset using the ETL pipeline created:
 Split of the dataset for each model experimented with is based on the DateTime Index. Majorly, we created a training and test set. The target was to have a model that would forecast crude oil prices for the next quarter (90 days). However, this was a dynamic option as we ticked as I worked I on:
  Example split:
 
- ![train_test_split](image-3.png)
+ ![train_test_split](assets/image-3.png)
 
 * Exponential Smoothing (Holt Winters):
 The simple Exponential Smoothing, Double Exponential Smoothing and Triple Exponential Smoothing were all experimented with using both additive and multiplicative configuration.
@@ -351,7 +351,7 @@ Once the best model is identified, it is saved to a file to be used later to mak
 
 This demonstrates deploying a `Dash` app within a `Flask`app. 
 
-Use the link below to access the web app deployed to custom domain- `https://www.soyinkasowoolu.com/dashapp1/`:
+Use the link below to access the web app deployed to custom domain- `https://www.soyinkasowoolu.com/dashapp1/`
 
 ## Usage
 ### Accessing the Deployed Model

@@ -22,55 +22,73 @@ app = Dash(__name__, external_stylesheets=[bootstrap_css_path, 'static\\vendor\\
 
 # Create the app layout with components
 app.layout = html.Div( style=
-                      { 'display': 'flex', 
-                       'justify-content': 'center', 
-                       'align-items': 'center',
-                       'gap': '30px', 
-                        }, 
-                       children=[dbc.Container( [
-                                    html.H2("Crude Oil Price Tracker", className='section-title'  ),
-                                     # Selector section
-                                    html.Div([
-                                        html.P('Select commodity',style={'padding': '20px', 'fontWeight': 'bold'}),
-                                        dcc.Dropdown(id='commodity_id', options=[{'label': 'WTI', 'value': 'WTI'}, 
-                                                                                 {'label': 'Brent', 'value': 'brent'}], value='WTI'), 
-                                        html.P('Pick date interval', style={'padding': '10px', 'fontWeight': 'bold'}),
-                                        dcc.RadioItems(id='interval_id', options=[{'label': 'Daily', 'value': 'daily'}, 
-                                                                {'label': 'Weekly', 'value': 'weekly', } , 
-                                                                {'label': 'Monthly', 'value': 'monthly', } ], inline=True, value='daily', style={'marginRight':'20px'}),
-                                        html.P('Prediction Range', style={'padding': '10px', 'fontWeight': 'bold'} ),
-                                        dcc.Slider( id='prediction_slider', min=1, max=30, step=2, value=30, 
-                                                   marks={i: str(i) for i in range(1, 31)}, 
-                                                   tooltip={'always_visible': True, 'placement': 'bottom'} )
-                                            ]),
+                        { 'display': 'flex', 
+                        'justify-content': 'center', 
+                        'align-items': 'center',
+                        'gap': '30px', 
+                            }, 
+                        children=[dbc.Container( [
+                                        html.H2("Crude Oil Price Tracker", className='section-title'  ),
+                                        # Selector section
+                                        html.Div([
+                                            html.P('Select Commodity',style={'padding': '20px', 'fontWeight': 'bold'}),
+                                            dcc.Dropdown(id='commodity_id', options=[{'label': 'WTI', 'value': 'WTI'}, 
+                                                                                    {'label': 'Brent', 'value': 'brent'}], value='WTI'), 
+                                            html.P('Pick Date Interval', style={'padding': '10px', 'fontWeight': 'bold'}),
+                                            dcc.RadioItems(id='interval_id', options=[{'label': 'Daily', 'value': 'daily'}, 
+                                                                    {'label': 'Weekly', 'value': 'weekly', } , 
+                                                                    {'label': 'Monthly', 'value': 'monthly', } ], inline=True, value='daily', style={'marginRight':'20px'}),
+                                            html.P('Prediction Range', style={'padding': '10px', 'fontWeight': 'bold'}),
+                                            dcc.Slider( id='prediction_slider', min=1, max=30, step=2, value=30, 
+                                                    marks={i: str(i) for i in range(1, 31)}, 
+                                                    tooltip={'always_visible': True, 'placement': 'bottom'} )
+                                                ],style={ 'borderRadius': '10px', 
+                                                         'border': '1px solid #ccc', 
+                                                          'padding': '10px', 
+                                                          'marginBottom': '20px',
+                                                           'backgroundColor': '#f9f9f9'  }),
 
-                                    # Time series Trend Graph section
-                                    html.Div([
-                                        dcc.DatePickerRange( id='date-picker-range', 
-                                                            start_date='2024-01-01', 
-                                                            end_date=datetime.today().date() ),
-                                        html.H4(children='Price Trend', style={'padding': '20px'}),
-                                        
-                                        
-                                        dcc.Graph(id='trend_graph', figure={}),
+                                        # Time series Trend Graph section
+                                        html.Div([
+                                            html.P("Select Date Range", style={'padding': '10px', 'fontWeight': 'bold'}),
+                                            dcc.DatePickerRange( id='date-picker-range', 
+                                                                start_date='2024-01-01', 
+                                                                end_date=datetime.today().date() ),
+                                            html.H4(children='Price Trend', style={'padding': '20px'}),
                                             
                                             
-                                            ]),
-                                    # Time series Prediction Section
-                                    html.Div([
-                                        
-                                        html.H4(children='Price Prediction', style={'padding': '20px'}),
-                                                                          
-                                        dcc.Graph(id='pred_graph', figure={}),
+                                            dcc.Graph(id='trend_graph', figure={},style={ 'borderRadius': '10px', 
+                                                          'backgroundColor': '#f9f9f9', 
+                                                           'marginBottom': '20px'  }),
+                                                
+                                                
+                                                ], style={ 'borderRadius': '10px', 
+                                                         'border': '1px solid #ccc', 
+                                                          'padding': '10px', 
+                                                           'backgroundColor': '#f9f9f9', 
+                                                           'marginBottom': '20px'  }),
+                                            # Time series Prediction Graph section
+                                        html.Div([
+                                            
+                                            html.H4(children='Price Prediction', style={'padding': '20px'}),
                                             
                                             
-                                            ]),
+                                            dcc.Graph(id='pred_graph', figure={},style={ 'borderRadius': '10px', 
+                                                          'backgroundColor': '#f9f9f9', 
+                                                           'marginBottom': '20px'  }),
+                                                
+                                                
+                                                ], style={ 'borderRadius': '10px', 
+                                                         'border': '1px solid #ccc', 
+                                                          'padding': '10px', 
+                                                           'backgroundColor': '#f9f9f9', 
+                                                           'marginBottom': '20px'  }),
 
 
 
 
-], style={'align-items': 'center', 'width':800, 'gap': '30px'})
-])
+    ], style={'align-items': 'center', 'width':800, 'gap': '30px'})
+    ])
 
 @app.callback(
     Output(component_id='trend_graph', component_property='figure'),
@@ -113,7 +131,7 @@ def draw_trend_graph(commodity, interval, start_date, end_date):
     Input(component_id='date-picker-range', component_property='start_date'),
     Input(component_id='date-picker-range', component_property='end_date'),
 )
-def draw_data_table(commodity, interval, horizon, start_date, end_date):
+def draw_pred_graphtable(commodity, interval, horizon, start_date, end_date):
     cd = CommodityData()
     # Upload data from storage
     df = cd.etl_commodity_data(commodity, interval, start_date, end_date)
